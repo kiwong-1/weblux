@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXBot웹사이트</title>
+    <style>
+        /* 폰트 및 기본 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-color: #0077be;
+            --secondary-color: #00a8e8;
+            --dark-blue: #00171f;
+            --light-blue: #f0f9ff; /* 변경: 조금 더 부드러운 색상 */
+            --text-color: #333;
+            --white-color: #ffffff;
+            --section-padding: 100px 0;
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Poppins', sans-serif;
+            background-color: var(--white-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--secondary-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-section {
+            padding: var(--section-padding);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 60px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            border-radius: 5px;
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 내비게이션 바 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: top 0.3s, background-color 0.3s;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--secondary-color); }
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        .nav-item a {
+            text-decoration: none;
+            color: var(--dark-blue);
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-item a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-item a:hover::after, .nav-item a.active::after {
+            width: 100%;
+        }
+        .nav-item a.active {
+            color: var(--primary-color);
+        }
+
+        /* 모바일 메뉴(햄버거) */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .hamburger-icon {
+            width: 30px;
+            height: 22px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: .5s ease-in-out;
+        }
+        .hamburger-icon span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: var(--dark-blue);
+            border-radius: 9px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        .hamburger-icon span:nth-child(1) { top: 0px; }
+        .hamburger-icon span:nth-child(2), .hamburger-icon span:nth-child(3) { top: 9px; }
+        .hamburger-icon span:nth-child(4) { top: 18px; }
+
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            list-style: none;
+            gap: 40px;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .mobile-nav-menu.active {
+            transform: translateY(0);
+        }
+        .mobile-nav-item a {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            text-decoration: none;
+        }
+
+        /* 홈(메인) 섹션 */
+        #home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 0 20px; /* 좌우 패딩 추가 */
+            background: linear-gradient(135deg, #005c97, #363795);
+            color: var(--white-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* --- NEW: 홈 섹션 컨테이너 --- */
+        .home-container {
+            display: flex;
+            justify-content: space-around; /* 중앙 콘텐츠와 목업 사이 간격 */
+            align-items: center;
+            width: 100%;
+            max-width: 1400px; /* 전체 너비 조절 */
+            z-index: 2;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            flex-shrink: 0; /* 중앙 콘텐츠가 줄어들지 않도록 설정 */
+            padding: 0 40px; /* 목업과의 간격 확보 */
+        }
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        .hero-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: var(--white-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .hero-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: var(--secondary-color);
+            color: var(--white-color);
+        }
+
+        /* --- NEW: 핸드폰 목업 스타일 --- */
+        .phone-mockup {
+            width: 280px; /* 핸드폰 너비 */
+            height: 560px; /* 핸드폰 높이 */
+            background: #111;
+            border-radius: 40px; /* 둥근 모서리 */
+            border: 2px solid #444;
+            padding: 15px; /* 내부 스크린 여백 */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 0 0 2px #222;
+            position: relative;
+            flex-shrink: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .phone-mockup.left { animation-delay: -3s; }
+
+        .phone-mockup::before { /* 상단 스피커/카메라 모양 */
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 25px; /* 스크린 둥근 모서리 */
+            display: block;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .waves-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            z-index: 1;
+        }
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-size: 1000px 100px;
+            animation: animate-wave 30s linear infinite;
+        }
+        .wave.wave1 { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M-1,56.6 C150.3,138.8 349.8,-48.5 500,49.8 C650.2,148.1 849.7,-40.9 1001,56.6 L1000,101 L0,101 Z" fill="rgba(255,255,255,0.3)"></path></svg>'); animation-delay: 0s; }
+        .wave.wave2 { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M-1,56.6 C150.3,138.8 349.8,-48.5 500,49.8 C650.2,148.1 849.7,-40.9 1001,56.6 L1000,101 L0,101 Z" fill="rgba(255,255,255,0.5)"></path></svg>'); animation-delay: -5s; animation-duration: 20s;}
+        .wave.wave3 { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M-1,56.6 C150.3,138.8 349.8,-48.5 500,49.8 C650.2,148.1 849.7,-40.9 1001,56.6 L1000,101 L0,101 Z" fill="rgba(255,255,255,0.7)"></path></svg>'); animation-delay: -2s; animation-duration: 15s;}
+        .wave.wave4 { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M-1,56.6 C150.3,138.8 349.8,-48.5 500,49.8 C650.2,148.1 849.7,-40.9 1001,56.6 L1000,101 L0,101 Z" fill="rgb(255,255,255)"></path></svg>'); animation-delay: -5s; animation-duration: 10s;}
+
+        @keyframes animate-wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1000px; }
+        }
+
+        /* 기능 소개 섹션 */
+        #features { background-color: var(--white-color); }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: var(--white-color);
+            padding: 35px;
+            border-radius: var(--border-radius);
+            text-align: left;
+            border: 1px solid #e0e0e0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 119, 190, 0.15);
+            border-color: var(--secondary-color);
+        }
+        .feature-header { display: flex; align-items: center; margin-bottom: 20px; }
+        .feature-icon { font-size: 2.5rem; margin-right: 20px; }
+        .feature-title { font-size: 1.5rem; font-weight: 600; color: var(--dark-blue); }
+        .feature-desc { color: #666; line-height: 1.7; }
+        
+        #why-luxbot { background-color: var(--light-blue); }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+        .why-card {
+            background: var(--white-color);
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .why-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 168, 232, 0.15);
+        }
+        .why-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .why-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+        }
+        .why-desc {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        #commands { background-color: var(--white-color); }
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .command-category {
+            background: var(--white-color);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid #eee;
+        }
+        .command-category:hover { transform: translateY(-5px); }
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .command-list { list-style: none; }
+        .command-list li {
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        .command-list li:hover {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 168, 232, 0.3);
+        }
+
+        #reviews { background-color: var(--light-blue); }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+            height: 250px;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        .gallery-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 23, 31, 0.8), transparent);
+            color: var(--white-color);
+            padding: 40px 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+        .gallery-item:hover .overlay {
+            transform: translateY(0);
+        }
+        .overlay-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        #faq { background-color: var(--white-color); }
+        .faq-accordion {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background: var(--white-color);
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-blue);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-question::after {
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1), padding 0.5s;
+            padding: 0 20px;
+        }
+        .faq-answer p {
+            padding-bottom: 20px;
+            line-height: 1.7;
+            color: #555;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        /* 명령어 상세 모달 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 23, 31, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: var(--white-color);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: 300;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--dark-blue); }
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .modal-desc {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        .modal-image-container {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        .modal-image {
+            width: 100%;
+            display: block;
+        }
+        
+        /* 푸터 */
+        .footer {
+            background-color: var(--dark-blue);
+            color: var(--white-color);
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+        .footer-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        .footer-text { color: rgba(255, 255, 255, 0.7); margin-bottom: 30px; }
+        .footer-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--white-color);
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .footer-link:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 168, 232, 0.3); }
+        .copyright {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* 맨 위로 가기 버튼 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 119, 190, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 1200px) {
+            /* --- NEW: 화면이 작아지면 핸드폰 목업 숨기기 --- */
+            .phone-mockup {
+                display: none;
+            }
+            .hero-content {
+                padding: 0;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-menu { display: none; }
+            .mobile-menu-toggle { display: block; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .section-title { font-size: 2.2rem; }
+            .features-grid, .commands-grid, .gallery-grid, .why-grid { grid-template-columns: 1fr; }
+            .modal-content { padding: 25px; }
+            .modal-title { font-size: 1.5rem; }
+            .modal-desc { font-size: 1rem; }
+            .page-section { padding: 80px 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#home" class="nav-logo">LUX<span>Bot</span></a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link active">홈</a></li>
+                <li class="nav-item"><a href="#features" class="nav-link">기능 소개</a></li>
+                <li class="nav-item"><a href="#why-luxbot" class="nav-link">TMI</a></li>
+                <li class="nav-item"><a href="#commands" class="nav-link">사용법</a></li>
+                <li class="nav-item"><a href="#reviews" class="nav-link">후기&반응</a></li>
+                <li class="nav-item"><a href="#faq" class="nav-link">Q&A</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" aria-label="메뉴 열기">
+                <div class="hamburger-icon">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <ul class="mobile-nav-menu">
+        <li class="mobile-nav-item"><a href="#home" class="nav-link">홈</a></li>
+        <li class="mobile-nav-item"><a href="#features" class="nav-link">기능 소개</a></li>
+        <li class="mobile-nav-item"><a href="#why-luxbot" class="nav-link">TMI</a></li>
+        <li class="mobile-nav-item"><a href="#commands" class="nav-link">사용법</a></li>
+        <li class="mobile-nav-item"><a href="#reviews" class="nav-link">후기&반응</a></li>
+        <li class="mobile-nav-item"><a href="#faq" class="nav-link">Q&A</a></li>
+    </ul>
+
+    <main>
+        <section id="home" class="page-section">
+            <!-- --- UPDATED: 홈 섹션 구조 변경 --- -->
+            <div class="home-container">
+                <!-- 왼쪽 핸드폰 목업 -->
+                <div class="phone-mockup left">
+                    <!-- 여기에 왼쪽 핸드폰 캡처 이미지 경로를 입력하세요 -->
+                    <img src="left.jpg" alt="앱 스크린샷 1" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/250x520/e0f7fa/0077be?text=Image+Not+Found';">
+                </div>
+
+                <div class="hero-content">
+                    <h1 class="hero-title">LUXBot</h1>
+                    <p class="hero-subtitle">"DB · API · AI 융합" 근본 있는 카카오톡 봇</p>
+                    <a href="https://open.kakao.com/o/gY4e55me" class="hero-btn" target="_blank">무료 설치</a>
+                </div>
+
+                <!-- 오른쪽 핸드폰 목업 -->
+                <div class="phone-mockup right">
+                    <!-- 여기에 오른쪽 핸드폰 캡처 이미지 경로를 입력하세요 -->
+                    <img src="right.jpg" alt="앱 스크린샷 2"
+                         onerror="this.onerror=null;this.src='https://placehold.co/250x520/e8f5e9/388e3c?text=Image+Not+Found';">
+                </div>
+            </div>
+
+            <div class="waves-container">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+                <div class="wave wave3"></div>
+                <div class="wave wave4"></div>
+            </div>
+        </section>
+
+        <section id="features" class="page-section">
+            <div class="container">
+                <h2 class="section-title">주요 기능 정리</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">🧠</span><h3 class="feature-title">AI 분석</h3></div>
+                        <p class="feature-desc">성격분석, 채팅요약 등의 기능들에 AI분석을 활용함으로써 다른 봇들과는 다른 독창적인 체험이 가능하게 합니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">🎮</span><h3 class="feature-title">미니게임</h3></div>
+                        <p class="feature-desc">타자게임, 넌센스 퀴즈 등 다채로운 게임 기능을 통해 채팅방에 소통률 버프를 줍니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">⚙️</span><h3 class="feature-title">자동화 기능</h3></div>
+                        <p class="feature-desc">강퇴 알림, 아침 브리핑, 삭메알림 등 알잘딱 기능을 통해 채팅방 관리를 수월하게 합니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">📊</span><h3 class="feature-title">데이터 분석</h3></div>
+                        <p class="feature-desc">채팅 순위, 레벨 등 오픈채팅방 내 데이터를 보여줍니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">🔍</span><h3 class="feature-title">기록 조회</h3></div>
+                        <p class="feature-desc">날짜별 채팅 기록 조회, 특정 메시지 조회 등의 기능들을 통해 안전하고 깨끗한 채팅문화 조성을 돕습니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header"><span class="feature-icon">💎</span><h3 class="feature-title">100% 무료</h3></div>
+                        <p class="feature-desc">이 모든 기능들이 무료입니다 ㄷㄷ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="why-luxbot" class="page-section">
+            <div class="container">
+                <h2 class="section-title">💡 LUXBot TMI?</h2>
+                <div class="why-grid">
+                    <div class="why-card">
+                        <div class="why-icon">👴</div>
+                        <h3 class="why-title">생각보다 오래됨</h3>
+                        <p class="why-desc">정확한 날짜는 기억안나지만 2021년부터 조금씩 발전해오며 5년째 운영을 이어나가는 중입니다.</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="why-icon">⚡</div>
+                        <h3 class="why-title">24시간 빠른 속도</h3>
+                        <p class="why-desc">24시간 pc로 구동하기에 많은 사용률에도 빠르게 반응합니다</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="why-icon">📈</div>
+                        <h3 class="why-title">무제한 업데이트</h3>
+                        <p class="why-desc">사용자들의 피드백 반영하며 지속적으로 업데이트하고 있습니다</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="commands" class="page-section">
+            <div class="container">
+                <h2 class="section-title">📘 명령어 안내</h2>
+                <div class="commands-grid">
+                    <div class="command-category">
+                        <h3 class="category-title">AI & 분석 관련</h3>
+                        <ul class="command-list">
+                            <li class="command-item" data-command=".채팅요약" data-desc="방의 전체 채팅 기록을 AI가 분석하여 핵심 내용만 간결하게 요약해줍니다. 대화의 흐름을 빠르게 파악할 수 있습니다." data-img="채팅요약.jpg">.채팅요약</li>
+                            <li class="command-item" data-command=".성격분석" data-desc="자신의 채팅 스타일과 단어 사용 패턴을 AI가 분석하여 성격을 알려주는 재미있는 기능입니다." data-img="성격분석.jpg">.성격분석</li>
+                             <li class="command-item" data-command=".연대기" data-desc="해당 채팅방의 연대기를 보여줍니다" data-img="연대기.jpg">.연대기</li>
+                        </ul>
+                    </div>
+                    <div class="command-category">
+                        <h3 class="category-title">정보 & 통계 관련</h3>
+                        <ul class="command-list">
+                            <li class="command-item" data-command=".내정보" data-desc="채팅량, 레벨, 경험치 등 자신의 활동 정보를 상세하게 확인할 수 있습니다." data-img="내정보.jpg">.내정보</li>
+                            <li class="command-item" data-command=".채팅순위" data-desc="방 멤버들의 채팅량 순위를 확인하여 선의의 경쟁을 유도하고 참여를 독려할 수 있습니다." data-img="채팅순위.jpg">.채팅순위</li>
+                            <li class="command-item" data-command=".기록 [날짜]" data-desc="특정 날짜(예: .기록 20250725)의 채팅 기록을 모두 불러와 확인할 수 있습니다." data-img="기록.jpg">.기록 [날짜]</li>
+                        </ul>
+                    </div>
+                    <div class="command-category">
+                        <h3 class="category-title">재미 & 게임 관련</h3>
+                        <ul class="command-list">
+                            <li class="command-item" data-command=".타자도움말" data-desc="타자 게임의 룰과 난이도 설정 방법을 안내합니다. 친구들과 타자 실력을 겨뤄보세요!" data-img="타자게임.jpg">.타자도움말</li>
+                            <li class="command-item" data-command=".넌센스" data-desc="재미있는 넌센스 퀴즈를 풀어보며 채팅방 분위기를 즐겁게 만들 수 있습니다." data-img="넌센스.jpg">.넌센스</li>
+                            <li class="command-item" data-command=".영어퀴즈" data-desc="본인의 영어실력을 테스트 해보세요" data-img="https://placehold.co/800x450/e0f7fa/0077be?text=%EC%9A%B4%EC%84%B8+%EB%B3%B4%EA%B8%B0+%EC%98%88%EC%8B%9C">.영어퀴즈</li>
+                        </ul>
+                    </div>
+                     <div class="command-category">
+                        <h3 class="category-title">기타 & 검색 관련</h3>
+                         <ul class="command-list">
+                            <li class="command-item" data-command=".메세지찾기 [검색어]" data-desc="전체 대화에서 특정 단어가 포함된 메시지를 검색하여 쉽게 찾아볼 수 있습니다." data-img="메세지찾기.jpg">.메세지찾기 [검색어]</li>
+                            <li class="command-item" data-command=".개인기록 (답장하며)" data-desc="특정 사람의 메세지에 답장을 통해 해당 유저의 개인기록을 봅니다" data-img="개인기록.jpg">.개인기록 (답장하며)</li>
+                            <li class="command-item" data-command=".개인설정" data-desc="본인에게만 적용되는 개인 설정입니다." data-img="개인설정.jpg">.개인설정</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reviews" class="page-section">
+            <div class="container">
+                <h2 class="section-title">LUXBot을 즐기는 유저들</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="many.jpg" alt="봇 사용 1">
+                        <div class="overlay"><p class="overlay-text">"다양한 기능들을 체험해보고 있는 유저"</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="wow.jpg" alt="봇 사용 2">
+                        <div class="overlay"><p class="overlay-text">"기능들을 체험하며 놀라움을 감추지 못하는 유저"</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="right.jpg" alt="봇 사용 3">
+                        <div class="overlay"><p class="overlay-text">"LUXBot의 유머감각에 감탄하는 유저들"</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="page-section">
+            <div class="container">
+                <h2 class="section-title">❓ 질문 방지</h2>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <button class="faq-question">LUXBot 설치 하는법</button>
+                        <div class="faq-answer">
+                            <p>홈 화면 최상단 '무료 설치' 버튼 클릭 또는 카카오톡 검색을 통해 오픈채팅방에 참여해주세요. 참여 후 공지 확인하시면 안내되어 있습니다</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">모든 기능이 정말 무료인가요?</button>
+                        <div class="faq-answer">
+                            <p>네</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">봇 사용 중 오류가 발생하면 어떻게 해야 하나요?</button>
+                        <div class="faq-answer">
+                            <p>안귀찮을때 고칩니다</p>
+                        </div>
+                    </div>
+                     <div class="faq-item">
+                        <button class="faq-question">다른 봇과 함께 사용해도 괜찮나요?</button>
+                        <div class="faq-answer">
+                            <p>그건 설치 요청하시는 방장 마음입니다 해당 방에 봇이 몇개가 있든 상관없습니다</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <h3 class="footer-title">💧 LUXBot</h3>
+            <p class="footer-text">이래도 설치 안할래?</p>
+            <a href="https://open.kakao.com/o/gY4e55me" class="footer-link" target="_blank">LUXBot 설치방 (설치문의 & 소식)</a>
+            <div class="copyright">
+                <p>&copy; Developed by 💧고급물💧</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="commandModal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h3 id="modalTitle" class="modal-title"></h3>
+            <p id="modalDesc" class="modal-desc"></p>
+            <div class="modal-image-container">
+                <img id="modalImage" src="https://placehold.co/800x450/e0f7fa/0077be?text=Example+Image" alt="명령어 사용 예시" class="modal-image">
+            </div>
+        </div>
+    </div>
+    
+    <button class="back-to-top" aria-label="맨 위로 가기">↑</button>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.page-section');
+        
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 
+        };
+
+        const sectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const targetId = '#' + entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === targetId) {
+                            link.classList.add('active');
+                        }
+                    });
+                    document.querySelectorAll('.mobile-nav-item .nav-link').forEach(link => {
+                        link.classList.remove('active');
+                         if (link.getAttribute('href') === targetId) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // 모바일 메뉴가 열려있으면 닫기
+                if(mobileNavMenu.classList.contains('active')) {
+                    mobileNavMenu.classList.remove('active');
+                }
+            });
+        });
+
+        const commandItems = document.querySelectorAll('.command-item');
+        const modal = document.getElementById('commandModal');
+        const modalClose = document.querySelector('.modal-close');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalImage = document.getElementById('modalImage');
+
+        commandItems.forEach(item => {
+            item.addEventListener('click', () => {
+                modalTitle.textContent = item.dataset.command;
+                modalDesc.textContent = item.dataset.desc;
+                modalImage.src = item.dataset.img;
+                
+                modalImage.onerror = function() {
+                    this.onerror = null;
+                    this.src = 'https://placehold.co/800x450/e0f7fa/0077be?text=Image+Not+Found';
+                };
+
+                modal.classList.add('show');
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNavMenu = document.querySelector('.mobile-nav-menu');
+        const mobileNavLinks = mobileNavMenu.querySelectorAll('.nav-link');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileNavMenu.classList.toggle('active');
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavMenu.classList.remove('active');
+            });
+        });
+
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const wasActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!wasActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        const backToTopButton = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    });
+    </script>
+</body>
+</html>
